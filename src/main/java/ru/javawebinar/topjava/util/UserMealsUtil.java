@@ -37,26 +37,18 @@ public class UserMealsUtil {
         List<Meal> userMeals = new ArrayList<>();
         //Фильтрация по часам и группировка по датам
         meals.forEach(m -> {
-            LocalDate date = m.getDateTime().toLocalDate();
-            LocalTime time = m.getDateTime().toLocalTime();
-            if(TimeUtil.isBetweenHalfOpen(time,startTime,endTime)){
+            if(TimeUtil.isBetweenHalfOpen(m.getTime(),startTime,endTime)){
                 userMeals.add(m);
             }
             //Группировка каллорий по датам
-            mealDateExcess.put(date,mealDateExcess.getOrDefault(date,0) + m.getCalories());
+            mealDateExcess.put(m.getDate(),mealDateExcess.getOrDefault(m.getDate(),0) + m.getCalories());
         });
 
         //Создание результирующего списка
         ArrayList<MealTo> userMealWithExcesses = new ArrayList<>();
         userMeals.forEach(m -> userMealWithExcesses.add(
-                new MealTo(
-                        m.getDateTime(),
-                        m.getDescription(),
-                        m.getCalories(),
-                        mealDateExcess.get(m.getDateTime().toLocalDate()) <= caloriesPerDay
-                ))
-
-        );
+                createTo(m,mealDateExcess.get(m.getDate()) < caloriesPerDay )
+        ));
 
         return userMealWithExcesses;
     }
