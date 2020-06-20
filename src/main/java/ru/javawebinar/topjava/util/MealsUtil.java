@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
 
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MealsUtil {
+    private static final Logger log = LoggerFactory.getLogger(MealsUtil.class);
     public static void main(String[] args) {
         List<Meal> meals = Arrays.asList(
                 new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500),
@@ -29,14 +32,15 @@ public class MealsUtil {
     }
 
     public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+        log.debug("Summing and grouping calories per dates");
         Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
 //                      Collectors.toMap(Meal::getDate, Meal::getCalories, Integer::sum)
                 );
-
+        log.debug("Filtering meal per time period");
         return meals.stream()
-                .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime))
+                .filter(meal -> DateTimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime))
                 .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
                 .collect(Collectors.toList());
     }
