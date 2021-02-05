@@ -31,10 +31,32 @@
                 <version>3.8.1</version>
                 <configuration>
                     <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
-        </plugins>
+		    <target>${java.version}</target>
+		</configuration>
+	    </plugin>
+
+	    <!-- by https://www.baeldung.com/tomcat-deploy-war-->
+	    <plugin>
+		<groupId>org.codehaus.cargo</groupId>
+		<artifactId>cargo-maven3-plugin</artifactId>
+		<version>1.9.0</version>
+		<configuration>
+		    <container>
+			<containerId>tomcat9x</containerId>
+			<type>remote</type>
+		    </container>
+		    <configuration>
+			<type>runtime</type>
+			<properties>
+			    <cargo.hostname>localhost</cargo.hostname>
+			    <cargo.servlet.port>8088</cargo.servlet.port>
+			    <cargo.remote.username>admin</cargo.remote.username>
+			    <cargo.remote.password>admin</cargo.remote.password>
+			</properties>
+		    </configuration>
+		</configuration>
+	    </plugin>
+	</plugins>
     </build>
 
     <dependencies>
