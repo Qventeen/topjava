@@ -4,11 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
-import ru.javawebinar.topjava.repository.InMemoryMealRepositoryImpl;
+import ru.javawebinar.topjava.repository.InMemoryMealRepository;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.service.MealServiceImpl;
 import ru.javawebinar.topjava.util.DateTimeUtil;
-import ru.javawebinar.topjava.validators.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,9 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalUnit;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 
 public class MealServlet extends HttpServlet {
@@ -33,106 +31,66 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<String> validErr =  new ArrayList<>();
-
         req.setCharacterEncoding("UTF-8");
         String action = req.getParameter("action");
-        List<MealTo> meals = Collections.EMPTY_LIST;
-        String forward = TO_MEALS;
+        List<MealTo> meals = null;
+        String url = TO_MEALS;
 
-        if("delete".equalsIgnoreCase(action)){
-            log.info("delete element");
-            Long id = new IdValidator().validate(req.getParameter("id"), validErr);
-
-            //Если идентификатор валидный выполняем удаление
-            if(validErr.isEmpty())
-                service.delete(id);
-
-            //Получаем все элементы резозитория
-            meals = service.getAll();
-        } else if("edit".equalsIgnoreCase(action)){
-            log.info("edit element");
-            Long id = new IdValidator().validate(req.getParameter("id"), validErr);
-
-            //Если идентификатор валидный получаем экземпляр еды из репозитория
-            if(validErr.isEmpty())
-                req.setAttribute("meal", service.getById(id));
-            forward = MEAL_FORM;
-
-        } else if(action == null){
-            log.info("Get all elements from repository");
-            meals = service.getAll();
-
-        } else if("find".equalsIgnoreCase(action)){
-            log.info("Find element by id in repository");
-
-            Long id = new IdValidator().validate(req.getParameter("id"), validErr);
-
-            MealTo mealTo = service.getById(id);
-            if(mealTo != null)
-                meals = Arrays.asList(mealTo);
-        }
-        else {
-            req.setAttribute("meal", new Meal(null, LocalDateTime.now().truncatedTo(),"",500));
-            forward = MEAL_FORM;
+        switch(action == null? "all" : action) {
+            case "delete":
+                log.info("delete element");
+                service.delete(Long.parseLong(req.getParameter("id")));
+                resp.sendRedirect(TO_MEALS_CONTROLLER);
+                return;
+            case "edit":
+                log.info("edit element");
+                req.setAttribute("meal", service.get(Long.parseLong(req.getParameter("id"))));
+                url = MEAL_FORM;
+                break;
+            case "create":
+                req.setAttribute("meal", new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 2000));
+                url = MEAL_FORM;
+                break;
+            case "all":
+                log.info("Get all elements from repository");
+                req.setAttribute("meals", service.getAll());
+                break;
+            default:
+                resp.sendRedirect(TO_MEALS_CONTROLLER);
+                return;
         }
 
-        req.setAttribute("validationR", validErr);
-        req.setAttribute("meals", meals);
-
-        log.info("Forward to {}", forward);
-        getServletContext().getRequestDispatcher(forward).forward(req,resp);
+        log.info("Forward to {}", url);
+        getServletContext().getRequestDispatcher(url).forward(req,resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<String> validErr =  new ArrayList<>();
         req.setCharacterEncoding("UTF-8");
 
         log.info("doPost");
-        String forward = TO_MEALS_CONTROLLER;
+        String url = TO_MEALS_CONTROLLER;
+        String id = req.getParameter("id");
 
-        Meal meal = validateAndGetMealFromRequest(validErr, req);
+        Meal meal = new Meal(
+                id.isEmpty() ? null : Long.parseLong(id),
+                LocalDateTime.parse(req.getParameter("dateTime")),
+                req.getParameter("description"),
+                Integer.parseInt(req.getParameter("calories"))
+        );
 
-        log.debug("Meal request validation -> {}", meal);
-        req.setAttribute("validationR", validErr);
-
-        //Если валидация не успешна переходим на страницу формы
-        if(!validErr.isEmpty()) {
-            forward = MEAL_FORM;
-            req.setAttribute("meal", meal);
-            req.getRequestDispatcher(forward).forward(req, resp);
-        } else {
-            //Если идентификатора нет значит новый элемент
-            if (meal.getId() == null) service.add(meal);
-
-            //Если идентификатор есть значит обновляем существующий элемент
-            else service.update(meal);
-            resp.sendRedirect(forward);
-        }
+        if (meal.getId() == null) service.add(meal);
+        else service.update(meal);
+        resp.sendRedirect(url);
     }
 
 
     @Override
     public void init() throws ServletException {
         log.info("Init {}", this.getClass().getSimpleName());
-        service = new MealServiceImpl(InMemoryMealRepositoryImpl.getInstance());
+        service = new MealServiceImpl(InMemoryMealRepository.getInstance());
 
         getServletContext().setAttribute("formatter", DateTimeUtil.getDateTimeFormatter());
     }
 
-    /*
-    Даный метод выполняет построение экземпляра класса Meal из запроса.
-    Во время построения выполняется валидация добавляемых полей.
-    Результат валидации возвращается в переданный список validErr
-    В случае наличия ошибок список будет не пуст.
-     */
-    private Meal validateAndGetMealFromRequest(List<String> validationR, HttpServletRequest req){
-        return new Meal (
-                new IdValidator().validate(req.getParameter("id"),validationR),
-                new DateTimeValidator().validate(req.getParameter("dateTime"),validationR),
-                new DescriptionValidator().validate(req.getParameter("description"),validationR),
-                new CaloriesValidator().validate(req.getParameter("calories"), validationR)
-        );
-    }
 }

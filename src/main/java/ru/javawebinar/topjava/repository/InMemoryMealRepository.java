@@ -14,14 +14,14 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class InMemoryMealRepositoryImpl implements MealRepository<Meal> {
-    private static final Logger log = getLogger(InMemoryMealRepositoryImpl.class);
+public class InMemoryMealRepository implements MealRepository<Meal> {
+    private static final Logger log = getLogger(InMemoryMealRepository.class);
     private static MealRepository<Meal> instance;
 
-    private volatile AtomicLong counter = new AtomicLong(0);
+    private AtomicLong counter = new AtomicLong(0);
     private ConcurrentMap<Long,Meal> repository;
 
-    private InMemoryMealRepositoryImpl(){
+    private InMemoryMealRepository(){
         repository = new ConcurrentSkipListMap<>();
         repository.put(counter.get(), new Meal(counter.getAndAdd(1), LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
         repository.put(counter.get(), new Meal(counter.getAndAdd(1), LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
@@ -34,7 +34,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository<Meal> {
 
     public static synchronized MealRepository<Meal> getInstance(){
         if(instance == null)
-            instance = new InMemoryMealRepositoryImpl();
+            instance = new InMemoryMealRepository();
         return instance;
     }
 
@@ -55,22 +55,16 @@ public class InMemoryMealRepositoryImpl implements MealRepository<Meal> {
     public Meal save(Meal item) {
         log.debug("Create or update record");
 
-        if(item == null)
-        return null;
+        if(item.isNew()) {
+            item.setId(counter.getAndAdd(1));
+            return repository.put(item.getId(), item);
+        }
 
-        Meal result;
-        if(item.getId() != null && repository.containsKey(item.getId()))
-            result = new Meal(item.getId(), item.getDateTime(),item.getDescription(),item.getCalories());
-        else
-            result = new Meal(counter.getAndAdd(1), item.getDateTime(), item.getDescription(), item.getCalories());
-
-        repository.put(result.getId(),result);
-        return result;
+        return repository.computeIfPresent(item.getId(),(id, oldMeal) -> item);
     }
 
     @Override
     public Meal delete(Long id) {
-
         return repository.remove(id);
     }
 

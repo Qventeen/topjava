@@ -14,8 +14,6 @@ public final class MealServiceImpl implements MealService {
     private static final Logger log = LoggerFactory.getLogger(MealServiceImpl.class);
     private MealRepository<Meal> repository;
 
-    private Integer caloriesPerDay = 2000;
-
     public MealServiceImpl(MealRepository<Meal> repository) {
         this.repository = repository;
     }
@@ -23,35 +21,19 @@ public final class MealServiceImpl implements MealService {
     @Override
     public List<MealTo> getAll() {
         log.info("Get all elements from repository and create List of Meal transfer objects");
-        return MealsUtil.filteredByStreams(repository.findAll(), LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
+        return MealsUtil.getFilteredTos(repository.findAll(), LocalTime.MIN, LocalTime.MAX, MealsUtil.DEF_CALORIES);
     }
 
     @Override
-    public MealTo getById(Long id) {
+    public Meal get(Long id) {
         log.info("Get item by id and create MealTo");
-
-        List<MealTo> result = MealsUtil.filteredByStreams(
-                repository.findAll(),
-                LocalTime.MIN,
-                LocalTime.MAX,
-                caloriesPerDay
-        );
-
-
-        final MealTo[] mealTo = {null};
-        result.forEach(x -> {
-            if(x.getId().equals(id)){
-                mealTo[0] = x;
-                return;
-            }
-        });
-         return mealTo[0];
+        return repository.findById(id);
     }
 
     @Override
     public void add(Meal meal) {
         log.info("Add meal to repository");
-        Meal result = repository.save(meal);
+        repository.save(meal);
     }
 
     @Override
@@ -68,8 +50,5 @@ public final class MealServiceImpl implements MealService {
         return true;
     }
 
-    public void setCaloriesPerDay(Integer caloriesPerDay) {
-        this.caloriesPerDay = caloriesPerDay;
-    }
 
 }

@@ -21,6 +21,7 @@
 <h2>Meals</h2>
 <table align="center" border="2" cellpadding="7" cellspacing="0">
     <thead>
+    <a href="meals?action=create">Create</a>
     <tr class="caption">
         <th>ID</th>
         <th>Date/Time</th>
@@ -43,33 +44,8 @@
         </tr>
     </c:forEach>
 </table>
+
 <br/>
 
-<%--Вывод ошибок идентификатора--%>
-<c:set var="valErr" value="${requestScope.get('validationR')}"/>
-<c:if test="${valErr != null && !valErr.isEmpty()}">
-    <div align="center">
-        <h4>Incorrect find ID</h4>
-        <c:forEach items="${valErr}" var="err">
-            <c:out value="${err}"/>
-        </c:forEach>
-    </div>
-</c:if>
-
-<table align="center">
-    <tr>
-        <td>
-            <form method="get" action="meals">
-                <input type="submit" name="action" value="create"/>
-            </form>
-        </td>
-        <td>
-            <form method="get" action="meals">
-                <input type="submit" name="action" value="find"/>
-                <input type="number" required="required" name="id" min="0"/>
-            </form>
-        </td>
-    </tr>
-</table>
 </body>
 </html>

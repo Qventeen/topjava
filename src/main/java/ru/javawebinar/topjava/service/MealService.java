@@ -18,7 +18,7 @@ public interface MealService {
      * @param id идентификатор
      * @return List of Meal transfer object
      */
-    MealTo getById(Long id);
+    Meal get(Long id);
 
     /**
      * Добавляет новый элемент в ерпозиторий
