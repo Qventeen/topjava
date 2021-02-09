@@ -15,12 +15,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
-    private List<String> validErr =  Collections.synchronizedList(new ArrayList<String>());
 
     private MealService service;
 
@@ -31,13 +31,12 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<String> validErr =  new ArrayList<>();
+
         req.setCharacterEncoding("UTF-8");
         String action = req.getParameter("action");
         List<MealTo> meals = Collections.EMPTY_LIST;
         String forward = TO_MEALS;
-
-        //Очистим очередь ошибок валидации
-        validErr.clear();
 
         if("delete".equalsIgnoreCase(action)){
             log.info("delete element");
@@ -75,6 +74,9 @@ public class MealServlet extends HttpServlet {
                 meals = Arrays.asList(mealTo);
         }
         else {
+            LocalDateTime tmp = LocalDateTime.now();
+            LocalDateTime dt = LocalDateTime.of(tmp.getYear(),tmp.getMonth(),tmp.getDayOfMonth(),tmp.getHour(),tmp.getMinute());
+            req.setAttribute("meal", new Meal(null, dt,"",500));
             forward = TO_INSERT_OR_EDIT_MEAL;
         }
 
@@ -87,13 +89,12 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<String> validErr =  new ArrayList<>();
         req.setCharacterEncoding("UTF-8");
 
         log.info("doPost");
         String forward = TO_MEALS_CONTROLLER;
 
-        //Очистить список ошибок перед началом валидации
-        validErr.clear();
         Meal meal = validateAndGetMealFromRequest(validErr, req);
 
         log.debug("Meal request validation -> {}", meal);

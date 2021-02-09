@@ -22,7 +22,7 @@
 <form method="post" action="meals">
     <tr>
         <td>Date/time:</td>
-        <td><input type="datetime-local"  name="dateTime" value="${meal.dateTime}" /><br/></td>
+        <td><input type="datetime-local"   name="dateTime" value="${meal.dateTime}" /><br/></td>
     </tr>
     <tr>
         <td>Description:</td>

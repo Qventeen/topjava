@@ -53,8 +53,8 @@
 <table align="center">
     <tr>
         <td>
-            <form method="post" action="insertOrEditMeal.jsp"  >
-                <input type="submit" value="create" />
+            <form method="get" action="meals">
+                <input type="submit" name="action" value="create" />
             </form>
         </td>
         <td>
