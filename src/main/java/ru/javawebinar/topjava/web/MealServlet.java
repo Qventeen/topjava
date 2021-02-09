@@ -16,7 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 public class MealServlet extends HttpServlet {
@@ -26,7 +28,7 @@ public class MealServlet extends HttpServlet {
 
     private final String TO_MEALS = "/meals.jsp";
     private final String TO_MEALS_CONTROLLER = "meals";
-    private final String TO_INSERT_OR_EDIT_MEAL = "/insertOrEditMeal.jsp";
+    private final String MEAL_FORM = "/mealForm.jsp";
 
 
     @Override
@@ -40,7 +42,6 @@ public class MealServlet extends HttpServlet {
 
         if("delete".equalsIgnoreCase(action)){
             log.info("delete element");
-
             Long id = new IdValidator().validate(req.getParameter("id"), validErr);
 
             //Если идентификатор валидный выполняем удаление
@@ -49,16 +50,14 @@ public class MealServlet extends HttpServlet {
 
             //Получаем все элементы резозитория
             meals = service.getAll();
-
         } else if("edit".equalsIgnoreCase(action)){
-            log.info("Get element byId");
-
+            log.info("edit element");
             Long id = new IdValidator().validate(req.getParameter("id"), validErr);
 
             //Если идентификатор валидный получаем экземпляр еды из репозитория
             if(validErr.isEmpty())
                 req.setAttribute("meal", service.getById(id));
-            forward = TO_INSERT_OR_EDIT_MEAL;
+            forward = MEAL_FORM;
 
         } else if(action == null){
             log.info("Get all elements from repository");
@@ -74,10 +73,8 @@ public class MealServlet extends HttpServlet {
                 meals = Arrays.asList(mealTo);
         }
         else {
-            LocalDateTime tmp = LocalDateTime.now();
-            LocalDateTime dt = LocalDateTime.of(tmp.getYear(),tmp.getMonth(),tmp.getDayOfMonth(),tmp.getHour(),tmp.getMinute());
-            req.setAttribute("meal", new Meal(null, dt,"",500));
-            forward = TO_INSERT_OR_EDIT_MEAL;
+            req.setAttribute("meal", new Meal(null, LocalDateTime.now().truncatedTo(),"",500));
+            forward = MEAL_FORM;
         }
 
         req.setAttribute("validationR", validErr);
@@ -102,7 +99,7 @@ public class MealServlet extends HttpServlet {
 
         //Если валидация не успешна переходим на страницу формы
         if(!validErr.isEmpty()) {
-            forward = TO_INSERT_OR_EDIT_MEAL;
+            forward = MEAL_FORM;
             req.setAttribute("meal", meal);
             req.getRequestDispatcher(forward).forward(req, resp);
         } else {

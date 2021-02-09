@@ -18,13 +18,12 @@ private static final Logger log = LoggerFactory.getLogger(IdValidator.class);
                 log.warn("ID of meal < 0 ({})", id);
             }
         }catch (Exception e){
-            if(validationE != null) {
+            if( !validationE.isEmpty()) {
                 log.warn("Incorrect ID of meal -> {}", id);
                 validationR.add("Incorrect ID of meal");
             }
             return id;
         }
-
         return id;
     }
 }

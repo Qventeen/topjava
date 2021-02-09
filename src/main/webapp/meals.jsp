@@ -7,7 +7,6 @@
         .normal {
             color: limegreen;
         }
-
         .excess {
             color: indianred;
         }
@@ -49,10 +48,12 @@
 <%--Вывод ошибок идентификатора--%>
 <c:set var="valErr" value="${requestScope.get('validationR')}"/>
 <c:if test="${valErr != null && !valErr.isEmpty()}">
-    <h4 align="center">Incorrect find ID</h4>
-    <c:forEach items="${valErr}" var="err">
-        <c:out value="${err}"/>
-    </c:forEach>
+    <div align="center">
+        <h4>Incorrect find ID</h4>
+        <c:forEach items="${valErr}" var="err">
+            <c:out value="${err}"/>
+        </c:forEach>
+    </div>
 </c:if>
 
 <table align="center">
