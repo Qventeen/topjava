@@ -16,37 +16,26 @@ public interface MealService {
     /**
      * Получает элемент по идентификатору
      * @param id идентификатор
-     * @return Meal transfer object
-     * @exception UnsupportedOperationException
+     * @return List of Meal transfer object
      */
-    default MealTo getById(Long id) {
-        throw new UnsupportedOperationException();
-    }
+    MealTo getById(Long id);
 
     /**
      * Добавляет новый элемент в ерпозиторий
      * @param meal Еда
-     * @exception UnsupportedOperationException
      */
-    default void add(Meal meal){
-        throw new UnsupportedOperationException();
-    }
+    void add(Meal meal);
 
     /**
      * Обновляет существующий элемент в репозитории
      * @param meal Еда
-     * @exception UnsupportedOperationException
      */
-    default boolean update(Meal meal){
-        throw new UnsupportedOperationException();
-    }
+    void update(Meal meal);
 
     /**
      * Удаляет элемент из репозитория
      * @param id идентификатор
-     * @exception UnsupportedOperationException
+     * @return
      */
-    default boolean delete(Long id){
-        throw new UnsupportedOperationException();
-    }
+    boolean delete(Long id);
 }
