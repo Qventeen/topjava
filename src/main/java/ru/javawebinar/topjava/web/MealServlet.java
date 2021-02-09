@@ -103,6 +103,7 @@ public class MealServlet extends HttpServlet {
         //Если валидация не успешна переходим на страницу формы
         if(!validErr.isEmpty()) {
             forward = TO_INSERT_OR_EDIT_MEAL;
+            req.setAttribute("meal", meal);
             req.getRequestDispatcher(forward).forward(req, resp);
         } else {
             //Если идентификатора нет значит новый элемент
