@@ -22,9 +22,7 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         int userId = Integer.parseInt(req.getParameter("userId"));
-        int caloriesPerDay = Integer.parseInt(req.getParameter("caloriesPerDay"));
         SecurityUtil.setUserId(userId);
-        SecurityUtil.setCaloriesPerDay(caloriesPerDay);
-        resp.sendRedirect("index.html");
+        resp.sendRedirect("meals");
     }
 }

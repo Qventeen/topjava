@@ -6,52 +6,40 @@
 <html>
 <head>
     <title>Meal list</title>
-    <style>
-        .normal {
-            color: green;
-        }
-
-        .excess {
-            color: red;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <section>
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
-    <form method="get" action="meals">
-        <table>
-            <tr>
-                <td>Start Date:</td>
-                <td><input type="date" name="startDate"></td>
-                <br/>
-            </tr>
-            <tr>
-                <td>End Date:</td>
-                <td><input type="date" name="endDate"></td>
-                <br/>
-            </tr>
-            <tr>
-                <td>Start Time:</td>
-                <td><input type="time" name="startTime"/><br/>
-            </tr>
-            <tr>
-                <td>End Time:</td>
-                <td><input type="time" name="endTime"></td>
-                <br/>
-            </tr>
-            <tr>
-                <td>
-                    <button type="submit" name="action" value="filter">filter</button>
-                </td>
-                <td>
-                    <button onclick="window.history.back()">Cancel</button>
-                </td>
-            </tr>
 
-        </table>
+    <form method="get" action="meals">
+        <dl>
+            <dt>Start Date:</dt>
+            <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
+        </dl>
+        <dl>
+            <dt>End Date:</dt>
+            <dd><input type="date" name="endDate" value="${param.endDate}"></dd>
+        </dl>
+        <dl>
+            <dt>Start Time:</dt>
+            <dd><input type="time" name="startTime" value="${param.startTime}">
+        </dl>
+        <dl>
+            <dt>End Time:</dt>
+            <dd><input type="time" name="endTime" value="${param.endTime}"></dd>
+        </dl>
+        <dl>
+            <dt>
+                <button type="submit" name="action" value="filter">filter</button>
+            </dt>
+            <dt>
+                <button onclick="window.history.back()">Cancel</button>
+            </dt>
+        </dl>
+
     </form>
 
     <a href="meals?action=create">Add Meal</a>
@@ -68,7 +56,7 @@
         </thead>
         <c:forEach items="${meals}" var="meal">
             <jsp:useBean id="meal" type="ru.javawebinar.topjava.to.MealTo"/>
-            <tr class="${meal.excess ? 'excess' : 'normal'}">
+            <tr data-mealExcess="${meal.excess}">
                 <td>
                         <%--${meal.dateTime.toLocalDate()} ${meal.dateTime.toLocalTime()}--%>
                         <%--<%=TimeUtil.toString(meal.getDateTime())%>--%>
