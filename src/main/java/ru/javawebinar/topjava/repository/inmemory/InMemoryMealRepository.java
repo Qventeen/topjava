@@ -8,11 +8,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
-import java.util.Collection;
-
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -79,7 +75,7 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Collection<Meal> getByFilter(int userId, Predicate<Meal> filter, Comparator<Meal> comparator) {
         log.info("getAll for user {}", userId);
-        return repository.get(userId)
+        return repository.getOrDefault(userId, new HashMap<>(0))
                 .values()
                 .stream()
                 .filter(filter)
