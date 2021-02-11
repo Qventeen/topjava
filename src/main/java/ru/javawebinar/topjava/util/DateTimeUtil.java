@@ -18,6 +18,22 @@ public class DateTimeUtil {
         return (start == null || lt.compareTo(start) >= 0) && (end == null || lt.compareTo(end) <= 0);
     }
 
+    public static LocalDate getDate(String reqDate){
+        try {
+            return LocalDate.parse(reqDate);
+        }catch(Exception e){
+            return null;
+        }
+    }
+
+    public static LocalTime getTime(String reqTime){
+        try{
+            return LocalTime.parse(reqTime);
+        } catch(Exception e){
+            return null;
+        }
+    }
+
     public static String toString(LocalDateTime ldt) {
         return ldt == null ? "" : ldt.format(DATE_TIME_FORMATTER);
     }
