@@ -7,11 +7,13 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.util.Collection;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 
 import static java.util.Comparator.comparing;
@@ -52,13 +54,29 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public Collection<Meal> getAll(int userId) {
-        return repository.get(userId)
-                .values()
-                .stream()
-                .sorted(comparing(Meal::getDate).reversed()).collect(toList());
+        return getAll(userId, comparing(Meal::getDate).reversed());
     }
 
 
+    @Override
+    public Collection<Meal> getAll(int userId, Comparator<Meal> comparator) {
+        return getByFilter(userId, meal-> true, comparator);
+    }
+
+    @Override
+    public Collection<Meal> getByFilter(int userId, Predicate<Meal> filter) {
+        return getByFilter(userId, filter, comparing(Meal::getDate).reversed());
+    }
+
+    @Override
+    public Collection<Meal> getByFilter(int userId, Predicate<Meal> filter, Comparator<Meal> comparator) {
+                return repository.get(userId)
+                        .values()
+                        .stream()
+                        .filter(filter)
+                        .sorted(comparator)
+                        .collect(toList());
+    }
 
 }
 
