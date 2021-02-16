@@ -90,7 +90,7 @@ public class MealServiceTest {
 
     @Test
     public void getNotFound(){
-        assertNotFoundMatch(() -> service.get(NOT_FOUND, ADMIN_ID));
+        assertNotFoundMatch(() -> service.get(NOT_FOUND_ID, ADMIN_ID));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class MealServiceTest {
 
     @Test
     public void getAllNotFoundOwn(){
-        List<Meal> actual = service.getAll(NOT_FOUND);
+        List<Meal> actual = service.getAll(NOT_FOUND_ID);
         assertThat(actual).isEmpty();
     }
 
@@ -116,13 +116,13 @@ public class MealServiceTest {
 
 
         //Date bord testing
-        actual = service.getBetweenInclusive(startOfBordDate, startOfBordDate, ADMIN_ID);
+        actual = service.getBetweenInclusive(START_OF_BORD_DATE, START_OF_BORD_DATE, ADMIN_ID);
         assertMatch(actual, ADMIN_MEAL_2);
 
-        actual = service.getBetweenInclusive(startOfBordDate, endOfBoarDate, ADMIN_ID);
+        actual = service.getBetweenInclusive(START_OF_BORD_DATE, END_OF_BORD_DATE, ADMIN_ID);
         assertMatch(actual, ADMIN_MEAL, ADMIN_MEAL_2);
 
-        actual = service.getBetweenInclusive(endOfBoarDate, startOfBordDate, ADMIN_ID);
+        actual = service.getBetweenInclusive(END_OF_BORD_DATE, START_OF_BORD_DATE, ADMIN_ID);
         assertThat(actual).isEmpty();
 
 
