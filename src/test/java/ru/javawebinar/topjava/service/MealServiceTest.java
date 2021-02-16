@@ -25,11 +25,6 @@ import java.util.List;
 @RunWith(SpringRunner.class)
 @Sql(value = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
-    static {
-        // Only for postgres driver logging
-        // It uses java.util.logging and logged via jul-to-slf4j bridge
-        SLF4JBridgeHandler.install();
-    }
 
     @Autowired
     MealService service;
@@ -39,23 +34,24 @@ public class MealServiceTest {
     public void create() {
         Meal newMeal = getNew();
         Meal created = service.create(newMeal, ADMIN_ID);
-        Integer newId = created.getId();
-        newMeal.setId(newId);
+        Integer mealId = created.getId();
+        newMeal  = getNew();
+        newMeal.setId(mealId);
         MEAL_MATCHER.assertMatch(created, newMeal);
-        MEAL_MATCHER.assertMatch(service.get(newId, ADMIN_ID), newMeal);
+        MEAL_MATCHER.assertMatch(service.get(mealId, ADMIN_ID), newMeal);
     }
 
 
     @Test
     public void updateOwnMeal() {
-        Meal updated = getUpdated(USER_MEAL);
+        Meal updated = getUpdated();
         service.update(updated, USER_ID);
-        MEAL_MATCHER.assertMatch(service.get(updated.getId(), USER_ID),updated);
+        MEAL_MATCHER.assertMatch(service.get(updated.getId(), USER_ID), getUpdated());
     }
 
     @Test
     public void updateNotOwnMeal() {
-        Meal updated = getUpdated(USER_MEAL);
+        Meal updated = getUpdated();
         MEAL_MATCHER.assertNotFoundMatch(() -> service.update(updated, ADMIN_ID));
     }
 

@@ -30,14 +30,14 @@ public class MealTestData {
     public static final List<Meal> ADMIN_MEALS_LIST = Arrays.asList(ADMIN_MEAL, ADMIN_MEAL_2);
 
     public static Meal getNew() {
-        return new Meal(LocalDateTime.now(), "TestDescription", DEFAULT_CALORIES);
+        return new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS), "TestDescription", DEFAULT_CALORIES);
     }
 
-    public static Meal getUpdated(Meal meal){
-        Meal updateMeal = new Meal(meal);
+    public static Meal getUpdated(){
+        Meal updateMeal = new Meal(USER_MEAL);
         updateMeal.setCalories(350);
         updateMeal.setDescription("Updated description");
-        updateMeal.setDateTime(LocalDateTime.now().plus(3, ChronoUnit.HOURS));
+        updateMeal.setDateTime(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS));
         return updateMeal;
     }
 }
