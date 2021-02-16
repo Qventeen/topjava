@@ -11,11 +11,9 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNull;
 import static ru.javawebinar.topjava.MealTestData.*;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.util.List;
 
@@ -34,9 +32,6 @@ public class MealServiceTest {
     }
 
     @Autowired
-    MealRepository repository;
-
-    @Autowired
     MealService service;
 
 
@@ -46,60 +41,59 @@ public class MealServiceTest {
         Meal created = service.create(newMeal, ADMIN_ID);
         Integer newId = created.getId();
         newMeal.setId(newId);
-        assertMatch(created, newMeal);
-        assertMatch(service.get(newId, ADMIN_ID), newMeal);
+        MEAL_MATCHER.assertMatch(created, newMeal);
+        MEAL_MATCHER.assertMatch(service.get(newId, ADMIN_ID), newMeal);
     }
 
 
     @Test
     public void updateOwnMeal() {
-        Meal updatedU = getUpdated(USER_MEAL);
-        service.update(updatedU, USER_ID);
-
-        assertMatch(service.get(updatedU.getId(), USER_ID),updatedU);
+        Meal updated = getUpdated(USER_MEAL);
+        service.update(updated, USER_ID);
+        MEAL_MATCHER.assertMatch(service.get(updated.getId(), USER_ID),updated);
     }
 
     @Test
     public void updateNotOwnMeal() {
-        Meal updatedU = getUpdated(USER_MEAL);
-        assertNotFoundMatch(() -> service.update(updatedU, ADMIN_ID));
+        Meal updated = getUpdated(USER_MEAL);
+        MEAL_MATCHER.assertNotFoundMatch(() -> service.update(updated, ADMIN_ID));
     }
 
     @Test
     public void deleteOwn() {
         int mealId = USER_MEAL.getId();
         service.delete(mealId, USER_ID);
-        assertNull(repository.get(mealId, USER_ID));
+        MEAL_MATCHER.assertNotFoundMatch(() -> service.get(mealId, USER_ID));
     }
 
     @Test
     public void deleteNotOwn(){
-        assertNotFoundMatch(() -> service.delete(USER_MEAL.getId(), ADMIN_ID));
+        MEAL_MATCHER.assertNotFoundMatch(() -> service.delete(USER_MEAL.getId(), ADMIN_ID));
     }
 
     @Test
     public void getOwn() {
         Meal actual = service.get(USER_MEAL.getId(), USER_ID);
-        assertMatch(actual, USER_MEAL);
+        MEAL_MATCHER.assertMatch(actual, USER_MEAL);
     }
 
     @Test
     public void getNotOwn(){
-        assertNotFoundMatch(() -> service.get(USER_MEAL.getId(), ADMIN_ID));
+        MEAL_MATCHER.assertNotFoundMatch(() -> service.get(USER_MEAL.getId(), ADMIN_ID));
     }
 
     @Test
     public void getNotFound(){
-        assertNotFoundMatch(() -> service.get(NOT_FOUND_ID, ADMIN_ID));
+        MEAL_MATCHER.assertNotFoundMatch(() -> service.get(NOT_FOUND_ID, ADMIN_ID));
     }
 
     @Test
     public void getAllOwn() {
         List<Meal> actual = service.getAll(ADMIN_ID);
-        assertMatch(actual, ADMIN_MEAL, ADMIN_MEAL_2);
+        MEAL_MATCHER.assertMatch(actual, ADMIN_MEAL, ADMIN_MEAL_2);
 
         actual = service.getAll(USER_ID);
-        assertMatch(actual, USER_MEAL, USER_MEAL_2);
+        MEAL_MATCHER.assertMatch(actual, USER_MEAL, USER_MEAL_2);
     }
 
     @Test
@@ -109,23 +103,30 @@ public class MealServiceTest {
     }
 
     @Test
-    public void getBetweenInclusive() {
+    public void getBetweenNullDates() {
         //without bord
-        List<Meal> actual = service.getBetweenInclusive(null,null, ADMIN_ID);
-        assertMatch(actual, ADMIN_MEAL, ADMIN_MEAL_2);
+        List<Meal> actual = service.getBetweenInclusive(null, null, ADMIN_ID);
+        MEAL_MATCHER.assertMatch(actual, ADMIN_MEAL, ADMIN_MEAL_2);
 
+    }
 
+    @Test
+    public void getBetweenOneDate() {
         //Date bord testing
-        actual = service.getBetweenInclusive(START_OF_BORD_DATE, START_OF_BORD_DATE, ADMIN_ID);
-        assertMatch(actual, ADMIN_MEAL_2);
+        List<Meal> actual = service.getBetweenInclusive(START_OF_BORD_DATE, START_OF_BORD_DATE, ADMIN_ID);
+        MEAL_MATCHER.assertMatch(actual, ADMIN_MEAL_2);
+    }
 
-        actual = service.getBetweenInclusive(START_OF_BORD_DATE, END_OF_BORD_DATE, ADMIN_ID);
-        assertMatch(actual, ADMIN_MEAL, ADMIN_MEAL_2);
+    @Test
+    public void getBetweenBordDates() {
+        List<Meal> actual = service.getBetweenInclusive(START_OF_BORD_DATE, END_OF_BORD_DATE, ADMIN_ID);
+        MEAL_MATCHER.assertMatch(actual, ADMIN_MEAL, ADMIN_MEAL_2);
+    }
 
-        actual = service.getBetweenInclusive(END_OF_BORD_DATE, START_OF_BORD_DATE, ADMIN_ID);
+    @Test
+    public void getBetweenIncorrectDates(){
+        List<Meal> actual = service.getBetweenInclusive(END_OF_BORD_DATE, START_OF_BORD_DATE, ADMIN_ID);
         assertThat(actual).isEmpty();
-
-
     }
 
 
