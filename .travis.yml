@@ -19,7 +19,8 @@ script:
 # https://docs.travis-ci.com/user/customizing-the-build#Building-Specific-Branches
 branches:
   only:
-  - HW03
+    - master
+    - HW03
 
 # https://stackoverflow.com/a/49852690/548473:
 services:

@@ -1,3 +1,8 @@
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/224d6b6be1324e5ea2f5c75e2bfc6bc2)](https://www.codacy.com/manual/Qventeen/topjava?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Qventeen/topjava&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.com/Qventeen/topjava.svg?branch=HW03)](https://travis-ci.com/Qventeen/topjava)
+
+
+
 Java Enterprise Online Project
 ===============================
 

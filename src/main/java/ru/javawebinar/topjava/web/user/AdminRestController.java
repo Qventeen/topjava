@@ -5,9 +5,11 @@ import ru.javawebinar.topjava.model.User;
 
 import java.util.List;
 
+@SuppressWarnings("EmptyMethod")
 @Controller
 public class AdminRestController extends AbstractUserController {
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public List<User> getAll() {
         return super.getAll();

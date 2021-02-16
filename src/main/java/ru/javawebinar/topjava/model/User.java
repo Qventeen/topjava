@@ -40,7 +40,7 @@ public class User extends AbstractNamedEntity {
         this.password = password;
         this.caloriesPerDay = caloriesPerDay;
         this.enabled = enabled;
-        this.registered = registered;
+        this.registered =  new Date(registered.getTime());
         setRoles(roles);
     }
 
@@ -57,11 +57,11 @@ public class User extends AbstractNamedEntity {
     }
 
     public Date getRegistered() {
-        return registered;
+        return new Date(registered.getTime());
     }
 
     public void setRegistered(Date registered) {
-        this.registered = registered;
+        this.registered = new Date(registered.getTime());
     }
 
     public void setEnabled(boolean enabled) {
@@ -95,9 +95,9 @@ public class User extends AbstractNamedEntity {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", email=" + email +
-                ", name=" + name +
+                ", name=" + getName() +
                 ", enabled=" + enabled +
                 ", roles=" + roles +
                 ", caloriesPerDay=" + caloriesPerDay +
