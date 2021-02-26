@@ -17,6 +17,9 @@ branches:
   only:
   - master
 
+#https://docs.travis-ci.com/user/job-lifecycle/#customizing-the-build-phase
+script: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
 # https://stackoverflow.com/a/49852690/548473:
 services:
   - postgresql
