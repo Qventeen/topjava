@@ -28,6 +28,9 @@
         <junit.version>4.13.1</junit.version>
         <assertj.version>3.17.2</assertj.version>
 
+        <!--p6spy-->
+        <p6spy.version>3.7.0</p6spy.version>
+
         <!-- Hibernate -->
         <hibernate.version>5.4.22.Final</hibernate.version>
         <hibernate-validator.version>6.1.6.Final</hibernate-validator.version>
@@ -139,6 +142,13 @@
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate-validator.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>p6spy</groupId>
+            <artifactId>p6spy</artifactId>
+            <version>${p6spy.version}</version>
+        </dependency>
+
 
         <!--http://hibernate.org/validator/documentation/getting-started/#unified-expression-language-el-->
         <dependency>
