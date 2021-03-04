@@ -10,7 +10,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 public class TestTimer implements TestRule{
-    private static final Logger log = LoggerFactory.getLogger(TestTimer.class);
+    private static final Logger log = LoggerFactory.getLogger("result");
 
     @Override
     public Statement apply(Statement base, Description description) {
@@ -23,7 +23,7 @@ public class TestTimer implements TestRule{
                 }finally {
                     Instant end  = Instant.now();
                     Duration duration = Duration.between(start, end);
-                    log.debug("\n--> TIME OF TEST {} = {}ms", description, duration.toMillis());
+                    log.info("\n--> TIME OF TEST {} = {}ms", description, duration.toMillis());
                 }
             }
         };
