@@ -23,7 +23,7 @@ public class TestTimer implements TestRule{
                 }finally {
                     Instant end  = Instant.now();
                     Duration duration = Duration.between(start, end);
-                    log.debug("--> TIME OF TEST {} = {}ms", description, duration.toMillis());
+                    log.debug("\n--> TIME OF TEST {} = {}ms", description, duration.toMillis());
                 }
             }
         };

@@ -1,13 +1,15 @@
 package ru.javawebinar.topjava.model;
 
+import javax.persistence.*;
+
 import org.hibernate.validator.constraints.Range;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
@@ -74,7 +76,7 @@ public class User extends AbstractNamedEntity {
         this.password = password;
         this.caloriesPerDay = caloriesPerDay;
         this.enabled = enabled;
-        this.registered = registered;
+        this.registered = new Date(registered.getTime());
         setRoles(roles);
     }
 
@@ -87,11 +89,11 @@ public class User extends AbstractNamedEntity {
     }
 
     public Date getRegistered() {
-        return registered;
+        return new Date(registered.getTime());
     }
 
     public void setRegistered(Date registered) {
-        this.registered = registered;
+        this.registered = new Date(registered.getTime());
     }
 
     public int getCaloriesPerDay() {
