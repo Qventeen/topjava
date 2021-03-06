@@ -29,7 +29,7 @@
         <assertj.version>3.17.2</assertj.version>
 
         <!--p6spy-->
-        <p6spy.version>3.7.0</p6spy.version>
+        <p6spy.version>3.9.1</p6spy.version>
 
         <!-- Hibernate -->
         <hibernate.version>5.4.22.Final</hibernate.version>
@@ -147,6 +147,7 @@
             <groupId>p6spy</groupId>
             <artifactId>p6spy</artifactId>
             <version>${p6spy.version}</version>
+            <scope>test</scope>
         </dependency>
 
 
